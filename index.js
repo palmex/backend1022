@@ -16,6 +16,15 @@ app.get('/', (req,res) => {
     res.json({"welcome": "Class of Stellantis OU Module 3!!!!!"})
 })
 
+// Post ECHO endpoint
+app.post('/echo', (req,res) => {
+    echoBody = req.body
+    console.log('printout of request body', echoBody)
+    res.json(echoBody)
+})
+
+
+
 // start listening on port
 app.listen(port, () => {
     console.log(`Listening on port ${port}`)
