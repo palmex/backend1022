@@ -1,5 +1,6 @@
 // import statements
 const express = require('express')
+const db = require('./db')
 
 // define app & port 
 const app = express()
@@ -21,6 +22,29 @@ app.post('/echo', (req,res) => {
     echoBody = req.body
     console.log('printout of request body', echoBody)
     res.json(echoBody)
+})
+
+// db - async endpoint 
+app.get('/async', (req, res) => {
+
+    // 1
+    console.log("BEFORE callback function")
+
+    db.query("SELECT * FROM cars;", 
+        (error, results) =>{
+            if (error) {
+                res.status(500).json(error)
+            }
+
+            // 1
+            console.log("inside callback function")
+            result = results.rows
+            res.status(200).json(result)
+        }
+    )
+
+    // 2
+    console.log("AFTER callback function")
 })
 
 
