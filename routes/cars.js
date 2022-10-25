@@ -12,15 +12,8 @@ carsRouter.use(express.json())
 carsRouter.get("/all", (req,res)=>{
     // we will need a query 
     if (req.headers.admin){
-        db.query("SELECT * FROM cars;", 
-        (error, results) =>{
-            if (error) {
-                res.status(500).json(error)
-            }
-            result = results.rows
-            res.status(200).json(result)
-        }
-        )
+        dbQueryStatement = "SELECT * FROM cars;"
+        dbQuery(dbQueryStatement, req,res)
     } else {
         res.status(401).json({"authorization":"not granted. You are not authorized."})
     }
@@ -37,17 +30,42 @@ carsRouter.post("/new", (req,res)=>{
         ) VALUES ('${make}','${model}',${year},${odometer}) RETURNING *;`
 
     console.log(dbQueryStatement)
-    db.query(dbQueryStatement, 
-    (error, results) =>{
-        if (error) {
-            res.status(500).json(error)
-        }
-        result = results.rows
-        res.status(200).json(result)
-    }
-    )
-    
+    dbQuery(dbQueryStatement, req,res)
 })
+
+// Car specific endpoints 
+carsRouter.get("/:carId", (req,res)=>{
+    console.log("carId:", req.params.carId)
+    dbQueryStatement = `SELECT * FROM cars WHERE car_id = '${req.params.carId}';`
+    dbQuery(dbQueryStatement, req,res)
+})
+
+carsRouter.post("/:carId", (req,res)=>{
+    var odometer = req.body.odometer
+    console.log("carId:", req.params.carId)
+    dbQueryStatement = `UPDATE cars SET
+        odometer=${odometer}
+        WHERE car_id = '${req.params.carId}' RETURNING *;`
+    console.log(dbQueryStatement)
+    dbQuery(dbQueryStatement, req,res)
+})
+
+carsRouter.delete("/:carId", (req,res)=>{
+    console.log("carId:", req.params.carId)
+    dbQueryStatement =`DELETE FROM cars WHERE car_id = '${req.params.carId}';`
+    dbQuery(dbQueryStatement, req,res)
+})
+
+const dbQuery = (queryStatment, request, response) =>{
+    db.query(queryStatment, 
+        (error, results) =>{
+            if (error) {
+                response.status(500).json(error)
+            }
+            result = results.rows
+            response.status(200).json(result)
+        })
+}
 
 
 module.exports = carsRouter;
