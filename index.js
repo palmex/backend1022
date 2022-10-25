@@ -1,6 +1,7 @@
 // import statements
 const express = require('express')
 const db = require('./db')
+const carsRouter = require('./routes/cars')
 
 // define app & port 
 const app = express()
@@ -11,6 +12,7 @@ app.use(express.json())
 app.use(
     express.urlencoded({extended:true})
 )
+app.use('/cars',carsRouter)
 
 //our first REST API Endpoint 
 app.get('/', (req,res) => {
