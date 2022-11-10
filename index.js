@@ -3,13 +3,12 @@ const express = require('express')
 const db = require('./db')
 const carsRouter = require('./routes/cars')
 const usersRouter = require('./routes/users')
-const cors = require('cors')
+
 // define app & port 
 const app = express()
 const port = 3000
 
 // we want our app to be able to handle JSON and URLs
-app.use(cors())
 app.use(express.json())
 app.use(
     express.urlencoded({extended:true})
